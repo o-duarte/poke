@@ -1,0 +1,36 @@
+version: '2'
+services:
+  express:
+    restart: always
+    build:
+      context: ./server
+    command: npm start
+    volumes:
+      - ./nodeServer/server/:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - mongodb
+      - maven
+    links:
+      - maven
+    expose:
+      - "5001"
+    ports:
+      - 5001:5001
+
+  react:
+    restart: always
+    build:
+      context: ./client
+    command: npm start --loglevel=error
+    volumes:
+      - ./nodeServer/client/:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - express
+    links:
+      - express
+    expose:
+      - "5000"
+    ports:
+      - 5000:5000
